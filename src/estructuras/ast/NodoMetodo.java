@@ -57,13 +57,22 @@ public class NodoMetodo extends NodoSentencia {
     }
 
     /**
-     * STUB: Genera IR para un método
+     * Genera IR para un método, delimitado por BEGIN_FUNCTION / END_FUNCTION
      */
     @Override
     public void generar(modulos.ir.GeneradorCodigoIntermedio gci) {
-        // Generar IR para el bloque del método
+        // Delimitar la función en el IR: BEGIN_FUNCTION nombre, "p1,p2,..."
+        StringBuilder nombresParams = new StringBuilder();
+        if (parametros != null) {
+            for (VarParametro p : parametros) {
+                if (nombresParams.length() > 0) nombresParams.append(",");
+                nombresParams.append(p.getToken().getLexema());
+            }
+        }
+        gci.emitir("BEGIN_FUNCTION", token.getLexema(), nombresParams.toString(), "");
         if (bloque != null) {
             bloque.generar(gci);
         }
+        gci.marcarFinFuncion(token.getLexema());
     }
 }

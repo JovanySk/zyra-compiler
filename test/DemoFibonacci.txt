@@ -1,0 +1,47 @@
+class DemoFibonacci {
+    static void main() {
+        int i;
+        int n;
+        print("=== Fibonacci (10 terminos) ===");
+        i = 0;
+        while (i < 10) {
+            print(fibonacci(i));
+            i = i + 1;
+        }
+        print("=== Factorial de 6 ===");
+        n = factorial(6);
+        print(n);
+        if (n > 500) {
+            print("factorial mayor a 500");
+        } else {
+            print("factorial menor o igual a 500");
+        }
+    }
+
+    static int fibonacci(int k) {
+        int a;
+        int b;
+        int t;
+        int j;
+        a = 0;
+        b = 1;
+        j = 0;
+        while (j < k) {
+            t = a + b;
+            a = b;
+            b = t;
+            j = j + 1;
+        }
+        return a;
+    }
+
+    static int factorial(int k) {
+        int r;
+        r = 1;
+        while (k > 1) {
+            r = r * k;
+            k = k - 1;
+        }
+        return r;
+    }
+}

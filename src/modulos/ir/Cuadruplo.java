@@ -185,6 +185,12 @@ public class Cuadruplo {
             return "print " + arg1;
         } else if (operador.equals("read")) {
             return resultado + " = read()";
+        } else if (operador.equals("print_str")) {
+            return "print \"" + arg1 + "\"";
+        } else if (operador.equals("BEGIN_FUNCTION")) {
+            return "func " + arg1 + "(" + arg2 + "):";
+        } else if (operador.equals("END_FUNCTION")) {
+            return "end " + arg1;
         }
 
         return toString();

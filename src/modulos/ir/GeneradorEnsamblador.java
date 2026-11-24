@@ -22,42 +22,65 @@ public class GeneradorEnsamblador {
         this.stringCounter = 0;
     }
 
+    /** Registros de argumentos de la convención Windows x64. */
+    private static final String[] ARG_REGS = { "rcx", "rdx", "r8", "r9" };
+
+    /** Parámetros pendientes (cuádruplos "param") antes de un "call". */
+    private final Deque<String> paramsPendientes = new ArrayDeque<>();
+
+    /** Funciones definidas en el programa (nombre simple -> etiqueta NASM). */
+    private final Map<String, String> funciones = new HashMap<>();
+
+    /** Etiqueta de salida de la función que se está generando. */
+    private String etiquetaRetorno;
+
     public String generar(GeneradorCodigoIntermedio gci) {
         this.gci = gci;
         codigo.setLength(0);
-        variableOffsets.clear();
-        offsetActual = 8;
         stringLabels.clear();
         stringCounter = 0;
+        funciones.clear();
 
-        // Encontrar el código de main (hasta primer return)
-        List<Cuadruplo> codigoMain = new ArrayList<>();
-        for (Cuadruplo c : gci.getCuadruplos()) {
-            codigoMain.add(c);
-            if (c.getOperador().equals("return")) {
-                break;
+        List<Cuadruplo> todos = gci.getCuadruplos();
+
+        // 1. Separar el IR en funciones usando BEGIN_FUNCTION / END_FUNCTION
+        List<String> nombres = new ArrayList<>();
+        List<String> params = new ArrayList<>();
+        List<List<Cuadruplo>> cuerpos = new ArrayList<>();
+        List<Cuadruplo> actual = null;
+        for (Cuadruplo c : todos) {
+            if (c.getOperador().equals("BEGIN_FUNCTION")) {
+                nombres.add(c.getArg1());
+                params.add(c.getArg2());
+                actual = new ArrayList<>();
+                cuerpos.add(actual);
+            } else if (c.getOperador().equals("END_FUNCTION")) {
+                actual = null;
+            } else if (actual != null) {
+                actual.add(c);
             }
         }
+        if (nombres.isEmpty()) {
+            // IR sin marcadores: todo se trata como main
+            nombres.add("main");
+            params.add("");
+            cuerpos.add(new ArrayList<>(todos));
+        }
+        for (String n : nombres) {
+            funciones.put(n, n.equals("main") ? "main" : "fn_" + n.replaceAll("[^A-Za-z0-9_]", "_"));
+        }
 
-        int tamano = calcularTamano(codigoMain);
-
-        // Header
+        // 2. Cabecera y sección de datos
         codigo.append("bits 64\n");
         codigo.append("default rel\n\n");
-
-        // Extern para I/O
         codigo.append("extern printf\n");
         codigo.append("extern scanf\n");
         codigo.append("extern malloc\n\n");
-
-        // Data section con formatos y strings
         codigo.append("section .data\n");
         codigo.append("    fmt_int db '%d', 10, 0  ; Formato para imprimir int con newline\n");
         codigo.append("    fmt_str db '%s', 10, 0  ; Formato para imprimir string con newline\n");
         codigo.append("    fmt_scan db '%d', 0      ; Formato para scanf\n");
-
-        // Agregar strings literales recolectados
-        for (Cuadruplo c : codigoMain) {
+        for (Cuadruplo c : todos) {
             if (c.getOperador().equals("print_str")) {
                 String texto = c.getArg1();
                 if (!stringLabels.containsKey(texto)) {
@@ -69,76 +92,139 @@ public class GeneradorEnsamblador {
         }
         codigo.append("\n");
 
-        // Code section
+        // 3. Código: main primero, después el resto de funciones
         codigo.append("section .text\n");
-        codigo.append("global main\n\n");
+        codigo.append("global main\n");
+        int iMain = nombres.indexOf("main");
+        if (iMain >= 0) {
+            generarFuncion(nombres.get(iMain), params.get(iMain), cuerpos.get(iMain));
+        }
+        for (int i = 0; i < nombres.size(); i++) {
+            if (i != iMain) {
+                generarFuncion(nombres.get(i), params.get(i), cuerpos.get(i));
+            }
+        }
+        return codigo.toString();
+    }
 
-        // Main
-        codigo.append("; ========== main con I/O ==========\n");
-        codigo.append("main:\n");
-        codigo.append("    push rbp\n");
-        codigo.append("    mov rbp, rsp\n");
+    /**
+     * Genera una función x86-64 completa: prólogo, copia de parámetros desde
+     * rcx/rdx/r8/r9 a la pila, cuerpo y epílogo con el valor de retorno en rax.
+     */
+    private void generarFuncion(String nombre, String listaParams, List<Cuadruplo> cuerpo) {
+        variableOffsets.clear();
+        offsetActual = 8;
+        paramsPendientes.clear();
+        String etiqueta = funciones.get(nombre);
+        etiquetaRetorno = ".ret_" + etiqueta;
+        boolean esMain = nombre.equals("main");
+
+        String[] ps = (listaParams == null || listaParams.isEmpty()) ? new String[0] : listaParams.split(",");
+        List<Cuadruplo> paraTamano = new ArrayList<>(cuerpo);
+        for (String p : ps) {
+            paraTamano.add(new Cuadruplo("=", p, "", p));
+        }
+        int tamano = calcularTamano(paraTamano);
+
+        codigo.append("\n; ========== ").append(nombre).append("(").append(listaParams == null ? "" : listaParams)
+                .append(") ==========\n");
+        codigo.append(etiqueta).append(":\n");
+        gen("push rbp");
+        gen("mov rbp, rsp");
         if (tamano > 0) {
-            codigo.append(String.format("    sub rsp, %d\n", tamano));
+            gen("sub rsp, " + tamano);
+        }
+        for (int i = 0; i < ps.length; i++) {
+            if (i < ARG_REGS.length) {
+                gen("mov " + loc(ps[i]) + ", " + ARG_REGS[i] + "    ; parámetro " + ps[i]);
+            } else {
+                comentario("AVISO: solo se soportan 4 parámetros por registro; " + ps[i] + " se ignora");
+            }
         }
         codigo.append("\n");
 
-        // Generar código
-        for (Cuadruplo c : codigoMain) {
+        for (Cuadruplo c : cuerpo) {
             String op = c.getOperador();
-
             if (op.equals("param")) {
-                comentario("SKIP: " + c.toReadableString());
+                comentario(c.toReadableString());
+                paramsPendientes.addLast(c.getArg1());
                 continue;
             }
-
             if (op.equals("call")) {
-                comentario("INLINE: " + c.toReadableString());
-                if (c.getResultado() != null && !c.getResultado().isEmpty()) {
-                    gen("xor rax, rax");
-                    gen("mov " + loc(c.getResultado()) + ", rax");
-                }
+                generarLlamada(c);
                 continue;
             }
-
             if (op.equals("return")) {
+                comentario(c.toReadableString());
+                if (c.getArg1() != null && !c.getArg1().isEmpty()) {
+                    cargar("rax", c.getArg1());
+                } else {
+                    gen("xor rax, rax");
+                }
+                gen("jmp " + etiquetaRetorno);
                 continue;
             }
-
-            // PRINT: llamada a printf
             if (op.equals("print")) {
                 generarPrint(c);
                 continue;
             }
-
-            // PRINT_STR: imprimir string
             if (op.equals("print_str")) {
                 generarPrintString(c);
                 continue;
             }
-
-            // READ: llamada a scanf
             if (op.equals("read")) {
                 generarRead(c);
                 continue;
             }
-
-            // NEW_ARRAY: asignación de memoria para array
             if (op.equals("new_array")) {
                 genNewArray(c);
                 continue;
             }
-
             traducir(c);
         }
 
-        // Epílogo
-        codigo.append("\n    mov rsp, rbp\n");
-        codigo.append("    pop rbp\n");
-        codigo.append("    xor rax, rax\n");
-        codigo.append("    ret\n");
+        if (esMain) {
+            gen("xor rax, rax");
+        }
+        codigo.append(etiquetaRetorno).append(":\n");
+        gen("mov rsp, rbp");
+        gen("pop rbp");
+        gen("ret");
+    }
 
-        return codigo.toString();
+    /**
+     * call f, n: toma los últimos n parámetros pendientes, los carga en
+     * rcx/rdx/r8/r9, reserva el shadow space y guarda rax en el temporal destino.
+     */
+    private void generarLlamada(Cuadruplo c) {
+        comentario(c.toReadableString());
+        String objetivo = c.getArg1();
+        String simple = objetivo.contains(".") ? objetivo.substring(objetivo.lastIndexOf('.') + 1) : objetivo;
+        int n = esNum(c.getArg2()) ? Integer.parseInt(c.getArg2()) : 0;
+
+        List<String> args = new ArrayList<>();
+        for (int i = 0; i < n && !paramsPendientes.isEmpty(); i++) {
+            args.add(0, paramsPendientes.removeLast());
+        }
+
+        String etiqueta = funciones.get(simple);
+        if (etiqueta == null) {
+            comentario("AVISO: '" + objetivo + "' no tiene código nativo (métodos de instancia/constructores)");
+            if (c.getResultado() != null && !c.getResultado().isEmpty()) {
+                gen("xor rax, rax");
+                gen("mov " + loc(c.getResultado()) + ", rax");
+            }
+            return;
+        }
+        for (int i = 0; i < args.size() && i < ARG_REGS.length; i++) {
+            cargar(ARG_REGS[i], args.get(i));
+        }
+        gen("sub rsp, 32");
+        gen("call " + etiqueta);
+        gen("add rsp, 32");
+        if (c.getResultado() != null && !c.getResultado().isEmpty()) {
+            gen("mov " + loc(c.getResultado()) + ", rax");
+        }
     }
 
     private void generarPrint(Cuadruplo c) {

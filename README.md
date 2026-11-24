@@ -20,10 +20,20 @@ Zyra source ─► Lexer (JFlex) ─► Parser (recursive descent ─► AST) �
 | Semantic analysis | AST `chequear()` passes, symbol table in `src/estructuras/ts` |
 | Intermediate code | `src/modulos/ir/GeneradorCodigoIntermedio.java`, `Cuadruplo`, `Triplo` |
 | Optimization | `src/modulos/ir/optimizacion/` (4 passes orchestrated by `OptimizadorIR`) |
-| Code generation | `src/modulos/ir/GeneradorEnsamblador.java` (Windows x64 ABI, `printf`/`scanf`/`malloc` imports) |
+| Code generation | `src/modulos/ir/GeneradorEnsamblador.java`: one native function per method, args in `rcx/rdx/r8/r9`, return in `rax`, shadow space per the Windows x64 ABI, `printf`/`scanf`/`malloc` imports |
 | Errors | typed lexical, syntax and semantic exceptions in `src/excepciones` |
 
 About **9,000 lines of Java**, with **52 test programs** in [`test/`](test). They cover expressions, nested if/while, static and dynamic methods, inheritance, private members, `null`, `instanceof`, casts, unreachable code, arrays and matrices.
+
+## Screenshots
+
+| Program output (native .exe) | Three-address code |
+|---|---|
+| ![console](docs/screenshots/04-console.png) | ![tac](docs/screenshots/05-tac.png) |
+| **Tokens** | **Quadruples** |
+| ![tokens](docs/screenshots/01-tokens.png) | ![quads](docs/screenshots/06-quadruples.png) |
+
+`test/DemoFibonacci.txt` compiles to a native executable that prints the first 10 Fibonacci numbers and `factorial(6) = 720`.
 
 ## Example
 
@@ -61,4 +71,4 @@ All documentation is in Spanish:
 
 ## Credits
 
-Team project (EQ1) for *Lenguajes y Autómatas*, Instituto Tecnológico Superior de Tantoyuca. Maintained by **Jovany Morales del Ángel**.
+Designed and built by **Jovany Morales del Ángel** as the final project for *Lenguajes y Autómatas I*, Instituto Tecnológico Superior de Tantoyuca.
