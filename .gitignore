@@ -1,0 +1,7 @@
+bin/
+*.class
+*.obj
+*.o
+*.exe
+*.asm
+.vscode/

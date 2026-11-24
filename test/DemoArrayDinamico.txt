@@ -1,0 +1,34 @@
+class DemoArrayDinamico {
+    static void main() {
+        int[] numeros;
+        int tam;
+        int i;
+        int suma;
+        
+        print("=== ARRAY DINAMICO ===");
+        print("Ingrese tamanio del array:");
+        tam = read();
+        
+        numeros = new int[tam];
+        
+        print("Ingrese los elementos:");
+        i = 0;
+        while (i < tam) {
+            print("Elemento:");
+            numeros[i] = read();
+            i = i + 1;
+        }
+        
+        print("=== CALCULANDO SUMA ===");
+        suma = 0;
+        i = 0;
+        while (i < tam) {
+            suma = suma + numeros[i];
+            i = i + 1;
+        }
+        
+        print("Suma total:");
+        print(suma);
+        print("======================");
+    }
+}

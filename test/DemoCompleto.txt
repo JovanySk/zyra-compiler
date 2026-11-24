@@ -1,0 +1,58 @@
+class DemoCompleto {
+    static void main() {
+        int[] numeros;
+        int tam;
+        int i;
+        int mayor;
+        int menor;
+        int suma;
+        int promedio;
+        
+        print("=== ANALISIS DE DATOS ===");
+        print("Cuantos numeros analizara:");
+        tam = read();
+        
+        numeros = new int[tam];
+        
+        print("=== INGRESO DE DATOS ===");
+        i = 0;
+        while (i < tam) {
+            print("Numero:");
+            numeros[i] = read();
+            i = i + 1;
+        }
+        
+        print("=== PROCESANDO ===");
+        
+        // Inicializar mayor y menor
+        mayor = numeros[0];
+        menor = numeros[0];
+        suma = 0;
+        
+        // Calcular
+        i = 0;
+        while (i < tam) {
+            if (numeros[i] > mayor) {
+                mayor = numeros[i];
+            }
+            if (numeros[i] < menor) {
+                menor = numeros[i];
+            }
+            suma = suma + numeros[i];
+            i = i + 1;
+        }
+        
+        promedio = suma / tam;
+        
+        print("=== RESULTADOS ===");
+        print("Mayor:");
+        print(mayor);
+        print("Menor:");
+        print(menor);
+        print("Suma:");
+        print(suma);
+        print("Promedio:");
+        print(promedio);
+        print("===================");
+    }
+}

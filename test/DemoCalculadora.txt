@@ -1,0 +1,28 @@
+class DemoCalculadora {
+    static void main() {
+        int x;
+        int y;
+        int suma;
+        int resta;
+        int mult;
+        
+        print(11);  // Ingrese número 1
+        x = read();
+        
+        print(22);  // Ingrese número 2
+        y = read();
+        
+        suma = x + y;
+        resta = x - y;
+        mult = x * y;
+        
+        print(100);  // SUMA
+        print(suma);
+        
+        print(200);  // RESTA
+        print(resta);
+        
+        print(300);  // MULTIPLICACIÓN
+        print(mult);
+    }
+}

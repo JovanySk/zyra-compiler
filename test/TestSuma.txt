@@ -1,0 +1,22 @@
+class TestSuma {
+    static void main() {
+        int a;
+        int b;
+        int resultado;
+        
+        // NOTA: Zyra solo imprime números
+        // 1111 = "Ingrese valor de a"
+        print(1111);
+        a = read();
+        
+        // 2222 = "Ingrese valor de b"  
+        print(2222);
+        b = read();
+        
+        resultado = a + b;
+        
+        // 9999 = "Su suma es:"
+        print(9999);
+        print(resultado);
+    }
+}

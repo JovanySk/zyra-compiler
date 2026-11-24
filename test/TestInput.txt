@@ -1,0 +1,18 @@
+class TestInput {
+    static void main() {
+        int x;
+        int y;
+        int suma;
+        
+        print(1000);
+        x = read();
+        
+        print(2000);
+        y = read();
+        
+        suma = x + y;
+        
+        print(3000);
+        print(suma);
+    }
+}

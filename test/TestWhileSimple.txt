@@ -1,0 +1,24 @@
+class TestWhileSimple {
+    static void main() {
+        int n;
+        int i;
+        
+        print("Ingrese limite:");
+        n = read();
+        
+        print("Valor de n leido:");
+        print(n);
+        
+        i = 0;
+        print("Iniciando bucle...");
+        while (i < n) {
+            print("i:");
+            print(i);
+            i = i + 1;
+        }
+        
+        print("Bucle terminado");
+        print("i final:");
+        print(i);
+    }
+}

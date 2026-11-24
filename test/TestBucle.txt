@@ -1,0 +1,21 @@
+class TestBucle {
+    static void main() {
+        int i;
+        int n;
+        
+        print("Cuantas veces iterar:");
+        n = read();
+        
+        print("Iniciando bucle...");
+        i = 0;
+        while (i < n) {
+            print("Iteracion:");
+            print(i);
+            i = i + 1;
+        }
+        
+        print("Bucle terminado.");
+        print("Total iteraciones:");
+        print(i);
+    }
+}

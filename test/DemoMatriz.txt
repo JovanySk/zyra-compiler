@@ -1,0 +1,41 @@
+class DemoMatriz {
+    static void main() {
+        int[][] matriz;
+        int i;
+        int j;
+        int suma;
+        
+        print("=== MATRIZ 3x3 ===");
+        matriz = new int[3][3];
+        
+        print("Ingrese elementos de la matriz:");
+        i = 0;
+        while (i < 3) {
+            j = 0;
+            while (j < 3) {
+                print("Fila-Columna:");
+                print(i);
+                print(j);
+                matriz[i][j] = read();
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        
+        print("=== SUMA DE ELEMENTOS ===");
+        suma = 0;
+        i = 0;
+        while (i < 3) {
+            j = 0;
+            while (j < 3) {
+                suma = suma + matriz[i][j];
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        
+        print("Suma total de la matriz:");
+        print(suma);
+        print("======================");
+    }
+}

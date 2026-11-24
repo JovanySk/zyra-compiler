@@ -1,0 +1,52 @@
+class PruebaCompleta {
+    static void main() {
+        int resultado;
+        int x;
+        int y;
+        int suma;
+        int producto;
+        
+        // Prueba 1: Asignaciones simples
+        x = 10;
+        y = 20;
+        
+        // Prueba 2: Operaciones aritméticas
+        suma = sumar(x, y);
+        producto = multiplicar(x, y);
+        
+        // Prueba 3: Condicionales
+        if (x > 5) {
+            resultado = 100;
+        } else {
+            resultado = 0;
+        }
+        
+        // Prueba 4: Bucle while
+       int contador;
+        contador = 0;
+        while (contador < 5) {
+            contador = contador + 1;
+        }
+        
+        // Prueba 5: Llamadas anidadas
+        resultado = sumar(sumar(x, y), producto);
+    }
+    
+    static int sumar(int a, int b) {
+        int temp;
+        temp = a + b;
+        return temp;
+    }
+    
+    static int multiplicar(int x, int y) {
+        int resultado;
+        resultado = x * y;
+        return resultado;
+    }
+    
+    static int dividir(int a, int b) {
+        int cociente;
+        cociente = a / b;
+        return cociente;
+    }
+}

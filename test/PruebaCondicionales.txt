@@ -1,0 +1,45 @@
+class PruebaCondicionales {
+    static void main() {
+        int x;
+        int y;
+        int resultado;
+        
+        x = 15;
+        y = 10;
+        
+        // If-else simple
+        if (x > y) {
+            resultado = x;
+        } else {
+            resultado = y;
+        }
+        
+        // If-else anidado
+        if (x > 20) {
+            resultado = 100;
+        } else {
+            if (x > 10) {
+                resultado = 50;
+            } else {
+                resultado = 0;
+            }
+        }
+        
+        // Múltiples comparaciones
+        if (x == 15) {
+            resultado = 1;
+        }
+        
+        if (x != y) {
+            resultado = 2;
+        }
+        
+        if (x >= 10) {
+            resultado = 3;
+        }
+        
+        if (x <= 20) {
+            resultado = 4;
+        }
+    }
+}

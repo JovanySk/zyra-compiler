@@ -1,0 +1,37 @@
+class DemoOperaciones {
+    static void main() {
+        int a;
+        int b;
+        int suma;
+        int resta;
+        int mult;
+        int div;
+        
+        print("=== CALCULADORA COMPLETA ===");
+        print("Ingrese primer numero:");
+        a = read();
+        
+        print("Ingrese segundo numero:");
+        b = read();
+        
+        print("=== RESULTADOS ===");
+        
+        suma = a + b;
+        print("Suma:");
+        print(suma);
+        
+        resta = a - b;
+        print("Resta:");
+        print(resta);
+        
+        mult = a * b;
+        print("Multiplicacion:");
+        print(mult);
+        
+        div = a / b;
+        print("Division:");
+        print(div);
+        
+        print("===================");
+    }
+}

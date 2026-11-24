@@ -1,0 +1,26 @@
+class DemoPromedio {
+    static void main() {
+        int a;
+        int b;
+        int c;
+        int suma;
+        int promedio;
+        
+        print(1);  // Ingrese primer número
+        a = read();
+        
+        print(2);  // Ingrese segundo número
+        b = read();
+        
+        print(3);  // Ingrese tercer número
+        c = read();
+        
+        suma = a + b;
+        suma = suma + c;
+        
+        promedio = suma;  // En Zyra simple no hay división todavía
+        
+        print(888);  // Señal: suma total viene
+        print(suma);
+    }
+}

@@ -1,0 +1,17 @@
+class TestIO {
+    static void main() {
+        int x;
+        int y;
+        int suma;
+        
+        print(100);
+        print(200);
+        print(300);
+        
+        x = 10;
+        y = 20;
+        suma = x + y;
+        
+        print(suma);
+    }
+}

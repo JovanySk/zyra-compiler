@@ -1,0 +1,18 @@
+class DemoSuma {
+    static void main() {
+        int num1;
+        int num2;
+        int suma;
+        
+        print(1111);  // Señal: ingrese primer número
+        num1 = read();
+        
+        print(2222);  // Señal: ingrese segundo número
+        num2 = read();
+        
+        suma = num1 + num2;
+        
+        print(9999);  // Señal: resultado viene
+        print(suma);
+    }
+}

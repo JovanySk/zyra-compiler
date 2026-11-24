@@ -1,0 +1,58 @@
+class DemoMatrizDinamica {
+    static void main() {
+        int[] matriz;
+        int filas;
+        int columnas;
+        int tamTotal;
+        int i;
+        int j;
+        int indice;
+        int suma;
+        
+        print("=== MATRIZ DINAMICA ===");
+        print("Ingrese numero de filas:");
+        filas = read();
+        
+        print("Ingrese numero de columnas:");
+        columnas = read();
+        
+        // Calcular tamaño total
+        tamTotal = filas * columnas;
+        
+        print("Creando matriz de:");
+        print(filas);
+        print("x");
+        print(columnas);
+        
+        // Crear array 1D que simula matriz 2D
+        matriz = new int[tamTotal];
+        
+        print("=== INGRESO DE DATOS ===");
+        i = 0;
+        while (i < filas) {
+            j = 0;
+            while (j < columnas) {
+                print("Ingrese elemento:");
+                
+                // Calcular índice: fila * columnas + columna
+                indice = i * columnas + j;
+                matriz[indice] = read();
+                
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        
+        print("=== CALCULANDO SUMA ===");
+        suma = 0;
+        i = 0;
+        while (i < tamTotal) {
+            suma = suma + matriz[i];
+            i = i + 1;
+        }
+        
+        print("Suma total de la matriz:");
+        print(suma);
+        print("========================");
+    }
+}

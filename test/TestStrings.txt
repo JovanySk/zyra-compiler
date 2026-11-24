@@ -1,0 +1,21 @@
+class TestStrings {
+    static void main() {
+        int a;
+        int b;
+        int suma;
+        
+        print("=== CALCULADORA ZYRA ===");
+        print("Ingrese primer numero:");
+        a = read();
+        
+        print("Ingrese segundo numero:");
+        b = read();
+        
+        suma = a + b;
+        
+        print("=======================");
+        print("La suma es:");
+        print(suma);
+        print("=======================");
+    }
+}

@@ -1,0 +1,21 @@
+class PruebaArrays {
+    static void main() {
+        int arr;
+        int valor;
+        int i;
+        
+        // Escribir en array
+        arr = 0;
+        arr = 10;
+        
+        // Leer de array
+        valor = arr;
+        
+        // Operaciones con arrays
+        i = 0;
+        while (i < 5) {
+            arr = i * 2;
+            i = i + 1;
+        }
+    }
+}

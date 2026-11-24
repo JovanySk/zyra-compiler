@@ -1,0 +1,12 @@
+class TestSimple {
+    static void main() {
+        int x;
+        x = 5;
+    }
+    
+    static int sumar(int a, int b) {
+        int resultado;
+        resultado = a + b;
+        return resultado;
+    }
+}
